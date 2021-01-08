@@ -4,6 +4,7 @@ import time
 import math
 import copy
 
+# Initialize pygame and predefine some useful stuff
 pygame.init()
 screen = pygame.display.set_mode((630, 730))
 black = (0, 0, 0)
@@ -12,6 +13,10 @@ red = (192, 0, 0)
 fontSmall = pygame.font.SysFont('text.ttf', 50)
 fontSmall = pygame.font.SysFont('text.ttf', 70)
 
+# Finds available moves based on the numbers in the square, coloumn, and row
+# Have an array, size 9 and interate through the row and coloumn
+# if you find aa number increase that index of the array by 1, for example if you find 2 increase array[2] by 1
+# valid moves will have a number of 0
 def findMoves(pos, a, b):
     global board
     moves = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -58,7 +63,8 @@ def findMoves(pos, a, b):
         if moves[i] == 0:
             validMoves.append(i+1)
     return validMoves
-    
+
+# solve the board using backtracking
 def solveBoard(showSol):
     moves = []
     found = False
@@ -66,6 +72,7 @@ def solveBoard(showSol):
     global board
     a = 0
     b = 0
+    # find square that is empty and find all moves for that square
     for a in range(9):
         for b in range(9):
             if board[a][b] == 0:    
@@ -95,28 +102,34 @@ def solveBoard(showSol):
 
         if found == True:
             break
-    
+    # if no square is empty then game is won
     if found == False:
         win = True
         return
+    # cycle through each move
     for k in moves:
         if showSol == True:
             pygame.draw.rect(screen, white, (b*70+4, a*70+4, 63, 63))
             drawNum(a, b, k)
             pygame.display.update()
+            # change value to slow down solution, higher value = slower solution
             time.sleep(0.005)
         board[a][b] = k
         solveBoard(showSol)
+        # if game is won then end the loop
         if win == True:
             return
+    # backtrack if there is a dead end
     if win == False:
         board[a][b] = 0
         if showSol == True:
             pygame.draw.rect(screen, white, (b*70+4, a*70+4, 63, 63))
             pygame.display.update()
+            # change value to slow down solution, higher value = slower solution
             time.sleep(0.005)
     return
 
+# same algorithm as solveBoard() but continues the solution even after finding a valid one, to find the number of solutions
 def findSolutions():
     global board
     moves = []
@@ -175,7 +188,8 @@ def reduceBoard():
         if findSolutions() != 1:
             board[a][b] = num
     return
-    
+
+# Randomly fill in values for the board
 def generateBoard():
     global board
     global sol
@@ -208,15 +222,19 @@ def generateBoard():
             if board[i][j] != 0:
                 drawNum(i, j, board[i][j])
     pygame.display.update()
-    
+
+# prints board
 def printBoard(board):
     for i in range (9):
         print (board[i])
+
+# print grid lines
 def printLines():
     for i in range (0, 10, 3):
         pygame.draw.line(screen, (0,0,0), (70*i, 0), (70*i,630), 4)
         pygame.draw.line(screen, (0,0,0), (0, 70*i), (630,70*i), 4)
-        
+
+# main game function
 def main():
     global win
     global board
@@ -230,6 +248,7 @@ def main():
     generateBoard()
     userBoard = copy.deepcopy(board)
 
+    # gets user input
     running = True
     while running:
         time.sleep(0.01)
@@ -239,10 +258,12 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouseX, mouseY = pygame.mouse.get_pos()
+                    # code for solve the current puzzle button
                     if mouseX < 210 and mouseY > 630:
                         win = False
                         solveBoard(True)
                         userBoard = copy.deepcopy(sol)
+                    # code for check solution button
                     elif mouseX > 210 and mouseX < 420 and mouseY > 630:
                         pygame.draw.rect(screen, white, (215, 635, 195, 75))
                         
@@ -250,8 +271,6 @@ def main():
                             num = fontSmall.render("Right", True, black)
                             screen.blit(num, (250, 660))
                         else:
-                            printBoard(userBoard)
-                            printBoard(sol)
                             num = fontSmall.render("Wrong", True, black)
                             screen.blit(num, (240, 660))
                         pygame.display.update()
@@ -259,14 +278,18 @@ def main():
                         pygame.draw.rect(screen, white, (215, 635, 195, 75))
                         check = fontSmall.render('Check', True, black)
                         screen.blit(check, (240, 660))
+                        
+                    # code for new game button
                     elif mouseX > 420 and mouseY > 630:
                         start()
+                    # Code for red hover square
                     elif mouseY < 630:
                         pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
                         squareX = mouseX // 70 
                         squareY = mouseY // 70
                         pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
                         printLines()
+            # code entering numbers
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1 and board[squareY][squareX] == 0:
                     pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
@@ -307,6 +330,7 @@ def main():
                 elif event.key == pygame.K_BACKSPACE :
                     userBoard[squareY][squareX] = 0
                     pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                # code for red hover square
                 elif event.key == pygame.K_UP :
                     if squareY != 0:
                         pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
@@ -333,10 +357,12 @@ def main():
                         printLines()
         pygame.display.update()
 
+# draws number on screen
 def drawNum(y, x, n):
     num = fontSmall.render(str(n), True, black)
     screen.blit(num, (70*x+23, 70*y+17))
 
+# creates new screen and puzzle
 def start():
     pygame.display.set_caption("Sudoku")
     #Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
