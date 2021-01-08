@@ -6,7 +6,10 @@ import math
 pygame.init()
 screen = pygame.display.set_mode((630, 730))
 black = (0, 0, 0)
+white = (255, 255, 255)
 fontSmall = pygame.font.SysFont('text.ttf', 50)
+fontSmall = pygame.font.SysFont('text.ttf', 70)
+
 def findMoves(pos, a, b):
     global board
     moves = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -54,7 +57,7 @@ def findMoves(pos, a, b):
             validMoves.append(i+1)
     return validMoves
     
-def solveBoard():
+def solveBoard(showSol):
     moves = []
     found = False
     global win
@@ -95,12 +98,19 @@ def solveBoard():
         win = True
         return
     for k in moves:
+        if showSol == True:
+            pygame.draw.rect(screen, white, (b*70+4, a*70+4, 63, 63))
+            drawNum(a, b, k)
+            pygame.display.update()
         board[a][b] = k
-        solveBoard()
+        solveBoard(showSol)
         if win == True:
             return
     if win == False:
         board[a][b] = 0
+        if showSol == True:
+            pygame.draw.rect(screen, white, (b*70+4, a*70+4, 63, 63))
+            pygame.display.update()
     return
 
 def findSolutions():
@@ -183,14 +193,14 @@ def generateBoard():
     board[2][0] = random.choice(findMoves(1, 2, 0))
     board[2][1] = random.choice(findMoves(1, 2, 1))
     board[2][2] = random.choice(findMoves(1, 2, 2))
-    solveBoard()
+    solveBoard(False)
     reduceBoard()
     
     for i in range (9):
         for j in range (9):
             if board[i][j] != 0:
                 drawNum(i, j, board[i][j])
-    
+    pygame.display.update()
     
 def printBoard():
     global board
@@ -203,15 +213,26 @@ def main():
     win = False
     generateBoard()
     #win = False
-    printBoard()
-    #solveBoard()
     #print("solving...")
     #printBoard()
+    running = True
+    while running:
+        time.sleep(0.01)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mouseX, mouseY = pygame.mouse.get_pos()
+                    if mouseX < 210 and mouseY > 630:
+                        win = False
+                        solveBoard(True)
+
+        pygame.display.update()
 
 def drawNum(y, x, n):
     num = fontSmall.render(str(n), True, black)
-    screen.blit(num, (70*x+25, 70*y+25))
-    pygame.display.update()
+    screen.blit(num, (70*x+20, 70*y+20))
 
 def start():
     pygame.display.set_caption("Sudoku")
@@ -227,6 +248,13 @@ def start():
         pygame.draw.line(screen, (0,0,0), (70*i, 0), (70*i,630), thickness)
         pygame.draw.line(screen, (0,0,0), (0, 70*i), (630,70*i), thickness)
         
+    solve = fontSmall.render('Solve', True, black)
+    check = fontSmall.render('Check', True, black)
+    new = fontSmall.render('New', True, black)
+    
+    screen.blit(solve, (40, 660))
+    screen.blit(check, (240, 660))
+    screen.blit(new, (470, 660))
     
     pygame.display.update()
     main()
