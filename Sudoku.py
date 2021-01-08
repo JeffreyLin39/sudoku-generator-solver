@@ -356,7 +356,7 @@ def main():
                         pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
                         printLines()
         pygame.display.update()
-
+    pygame.quit()
 # draws number on screen
 def drawNum(y, x, n):
     num = fontSmall.render(str(n), True, black)
