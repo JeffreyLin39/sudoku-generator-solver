@@ -1,5 +1,12 @@
+import pygame
 import random
+import time
+import math
 
+pygame.init()
+screen = pygame.display.set_mode((630, 730))
+black = (0, 0, 0)
+fontSmall = pygame.font.SysFont('text.ttf', 50)
 def findMoves(pos, a, b):
     global board
     moves = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -178,7 +185,12 @@ def generateBoard():
     board[2][2] = random.choice(findMoves(1, 2, 2))
     solveBoard()
     reduceBoard()
-
+    
+    for i in range (9):
+        for j in range (9):
+            if board[i][j] != 0:
+                drawNum(i, j, board[i][j])
+    
     
 def printBoard():
     global board
@@ -190,10 +202,33 @@ def main():
     global board
     win = False
     generateBoard()
-    win = False
+    #win = False
     printBoard()
-    solveBoard()
-    print("solving...")
-    printBoard()
+    #solveBoard()
+    #print("solving...")
+    #printBoard()
 
-main()
+def drawNum(y, x, n):
+    num = fontSmall.render(str(n), True, black)
+    screen.blit(num, (70*x+25, 70*y+25))
+    pygame.display.update()
+
+def start():
+    pygame.display.set_caption("Sudoku")
+    #Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+    pygame.display.set_icon(pygame.image.load('sudoku.png'))
+    screen.fill((255, 255, 255))
+    pygame.draw.line(screen, (0,0,0), (210, 630), (210,730), 3)
+    pygame.draw.line(screen, (0,0,0), (420, 630), (420,730), 3)
+    for i in range (0,10):
+        thickness = 2
+        if i%3 == 0:
+            thickness = 4
+        pygame.draw.line(screen, (0,0,0), (70*i, 0), (70*i,630), thickness)
+        pygame.draw.line(screen, (0,0,0), (0, 70*i), (630,70*i), thickness)
+        
+    
+    pygame.display.update()
+    main()
+
+start()
