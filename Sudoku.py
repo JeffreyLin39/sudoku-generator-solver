@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 import math
+import copy
 
 pygame.init()
 screen = pygame.display.set_mode((630, 730))
@@ -173,6 +174,7 @@ def reduceBoard():
     
 def generateBoard():
     global board
+    global sol
     board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -194,6 +196,7 @@ def generateBoard():
     board[2][1] = random.choice(findMoves(1, 2, 1))
     board[2][2] = random.choice(findMoves(1, 2, 2))
     solveBoard(False)
+    sol = copy.deepcopy(board)
     reduceBoard()
     
     for i in range (9):
@@ -202,19 +205,19 @@ def generateBoard():
                 drawNum(i, j, board[i][j])
     pygame.display.update()
     
-def printBoard():
-    global board
+def printBoard(board):
     for i in range (9):
         print (board[i])
         
 def main():
     global win
     global board
+    global userBoard
+    global sol
     win = False
     generateBoard()
-    #win = False
-    #print("solving...")
-    #printBoard()
+    userBoard = copy.deepcopy(board)
+
     running = True
     while running:
         time.sleep(0.01)
@@ -227,6 +230,23 @@ def main():
                     if mouseX < 210 and mouseY > 630:
                         win = False
                         solveBoard(True)
+                    elif mouseX > 210 and mouseX < 420 and mouseY > 630:
+                        pygame.draw.rect(screen, white, (215, 635, 195, 75))
+                        
+                        if userBoard == sol:
+                            num = fontSmall.render("Right", True, black)
+                            screen.blit(num, (240, 660))
+                        else:
+                            num = fontSmall.render("Wrong", True, black)
+                            screen.blit(num, (240, 660))
+                        pygame.display.update()
+                        time.sleep(1.5)
+                        pygame.draw.rect(screen, white, (215, 635, 195, 75))
+                        check = fontSmall.render('Check', True, black)
+                        screen.blit(check, (240, 660))
+                    elif mouseX > 420 and mouseY > 630:
+                        start()
+                        
 
         pygame.display.update()
 
