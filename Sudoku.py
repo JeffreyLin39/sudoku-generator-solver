@@ -8,6 +8,7 @@ pygame.init()
 screen = pygame.display.set_mode((630, 730))
 black = (0, 0, 0)
 white = (255, 255, 255)
+red = (192, 0, 0)
 fontSmall = pygame.font.SysFont('text.ttf', 50)
 fontSmall = pygame.font.SysFont('text.ttf', 70)
 
@@ -103,6 +104,7 @@ def solveBoard(showSol):
             pygame.draw.rect(screen, white, (b*70+4, a*70+4, 63, 63))
             drawNum(a, b, k)
             pygame.display.update()
+            time.sleep(0.005)
         board[a][b] = k
         solveBoard(showSol)
         if win == True:
@@ -112,6 +114,7 @@ def solveBoard(showSol):
         if showSol == True:
             pygame.draw.rect(screen, white, (b*70+4, a*70+4, 63, 63))
             pygame.display.update()
+            time.sleep(0.005)
     return
 
 def findSolutions():
@@ -155,12 +158,13 @@ def findSolutions():
         board[a][b] = k
         solutions += findSolutions()
         board[a][b] = 0
+    board[a][b] = 0
     return solutions   
 
 def reduceBoard():
     global board
     i = 0
-    while i < 64:
+    while i < 50:
         a = random.randint(0,8)
         b = random.randint(0,8)
         num = board[a][b]
@@ -208,12 +212,20 @@ def generateBoard():
 def printBoard(board):
     for i in range (9):
         print (board[i])
+def printLines():
+    for i in range (0, 10, 3):
+        pygame.draw.line(screen, (0,0,0), (70*i, 0), (70*i,630), 4)
+        pygame.draw.line(screen, (0,0,0), (0, 70*i), (630,70*i), 4)
         
 def main():
     global win
     global board
     global userBoard
     global sol
+    global squareX
+    global squareY
+    squareX = 0
+    squareY = 0
     win = False
     generateBoard()
     userBoard = copy.deepcopy(board)
@@ -230,13 +242,16 @@ def main():
                     if mouseX < 210 and mouseY > 630:
                         win = False
                         solveBoard(True)
+                        userBoard = copy.deepcopy(sol)
                     elif mouseX > 210 and mouseX < 420 and mouseY > 630:
                         pygame.draw.rect(screen, white, (215, 635, 195, 75))
                         
                         if userBoard == sol:
                             num = fontSmall.render("Right", True, black)
-                            screen.blit(num, (240, 660))
+                            screen.blit(num, (250, 660))
                         else:
+                            printBoard(userBoard)
+                            printBoard(sol)
                             num = fontSmall.render("Wrong", True, black)
                             screen.blit(num, (240, 660))
                         pygame.display.update()
@@ -246,13 +261,81 @@ def main():
                         screen.blit(check, (240, 660))
                     elif mouseX > 420 and mouseY > 630:
                         start()
-                        
-
+                    elif mouseY < 630:
+                        pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        squareX = mouseX // 70 
+                        squareY = mouseY // 70
+                        pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        printLines()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1 and board[squareY][squareX] == 0:
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 1
+                    drawNum(squareY, squareX, 1)
+                elif event.key == pygame.K_2 and board[squareY][squareX] == 0:
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 2
+                    drawNum(squareY, squareX, 2)
+                elif event.key == pygame.K_3 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 3
+                    drawNum(squareY, squareX, 3)
+                elif event.key == pygame.K_4 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 4
+                    drawNum(squareY, squareX, 4)
+                elif event.key == pygame.K_5 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 5
+                    drawNum(squareY, squareX, 5)
+                elif event.key == pygame.K_6 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 6
+                    drawNum(squareY, squareX, 6)
+                elif event.key == pygame.K_7 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 7
+                    drawNum(squareY, squareX, 7)
+                elif event.key == pygame.K_8 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 8
+                    drawNum(squareY, squareX, 8)
+                elif event.key == pygame.K_9 and board[squareY][squareX] == 0 :
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                    userBoard[squareY][squareX] = 9
+                    drawNum(squareY, squareX, 9)
+                elif event.key == pygame.K_BACKSPACE :
+                    userBoard[squareY][squareX] = 0
+                    pygame.draw.rect(screen, white, (squareX*70+4, squareY*70+4, 63, 63))
+                elif event.key == pygame.K_UP :
+                    if squareY != 0:
+                        pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        squareY -= 1
+                        pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        printLines()
+                elif event.key == pygame.K_DOWN :
+                    if squareY != 8:
+                        pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        squareY += 1
+                        pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        printLines()
+                elif event.key == pygame.K_LEFT :
+                    if squareX != 0:
+                        pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        squareX -= 1
+                        pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        printLines()
+                elif event.key == pygame.K_RIGHT :
+                    if squareX != 8:
+                        pygame.draw.rect(screen, white, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        squareX += 1
+                        pygame.draw.rect(screen, red, (squareX*70+3, squareY*70+3, 66, 66), 3)
+                        printLines()
         pygame.display.update()
 
 def drawNum(y, x, n):
     num = fontSmall.render(str(n), True, black)
-    screen.blit(num, (70*x+20, 70*y+20))
+    screen.blit(num, (70*x+23, 70*y+17))
 
 def start():
     pygame.display.set_caption("Sudoku")
