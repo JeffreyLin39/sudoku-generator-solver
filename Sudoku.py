@@ -365,8 +365,6 @@ def drawNum(y, x, n):
 # creates new screen and puzzle
 def start():
     pygame.display.set_caption("Sudoku")
-    #Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-    pygame.display.set_icon(pygame.image.load('sudoku.png'))
     screen.fill((255, 255, 255))
     pygame.draw.line(screen, (0,0,0), (210, 630), (210,730), 3)
     pygame.draw.line(screen, (0,0,0), (420, 630), (420,730), 3)
